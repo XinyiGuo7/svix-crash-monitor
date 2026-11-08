@@ -23,9 +23,10 @@ description = "From settlement prices to the simple variance swap rate, the risk
 path = "_output/02_svix_and_crash_probability_ipynb.ipynb"
 
 
-# TODO: Register the monitor notebook, `03_daily_monitor_ipynb`, following
-# the two entries above: a name, a description, and the path of the executed
-# notebook that `doit` leaves in `_output/`.
+[notebooks.03_daily_monitor_ipynb]
+name = "The Daily Monitor"
+description = "How the daily update works: the doit task that pulls the latest session, the history it appends to, the GitHub Actions workflow that reruns it every morning, and the page it publishes to GitHub Pages."
+path = "_output/03_daily_monitor_ipynb.ipynb"
 
 
 [notebooks.04_single_name_crash_bounds_ipynb]
@@ -53,13 +54,23 @@ window in the settings again when it changes; `doit latest` pulls the most
 recent session."""
 
 
-# TODO: Register the monitor's history as `[dataframes.svix_monitor_history]`,
-# following the entry above. It is the CSV in `_output/` that
-# `src/monitor.py` writes, and that the deploy workflow keeps on the
-# `monitor-history` branch. Document it: a name, a description, the path,
-# which column holds the date (`date_col`), how it is produced, and what a
-# reader needs to know (`docs`). The chart below refers to this entry by
-# name, so the site does not build until it exists.
+[dataframes.svix_monitor_history]
+name = "SVIX Monitor History"
+description = "One row per session: the 30-day SVIX, the Cboe VIX, and the probability of a 20% drop in the S&P 500 within a month under risk-neutral, log-investor, and power-utility (gamma = 2) beliefs"
+path = "_output/svix_monitor_history.csv"
+date_col = "date"
+tags = ["Options", "Volatility", "Monitor"]
+pull_method = "Computed by src/monitor.py from the Databento settlements and FRED; appended by `doit` (backfill) and `doit latest` (daily update)"
+docs = """Each row is computed from one session's E-mini S&P 500 option
+settlements, using the two end-of-month expirations that bracket 30 days.
+`svix_30` is Martin's (2017) SVIX, interpolated to a 30-day horizon, in
+annualized percent; `vix` is the Cboe VIX from FRED. `p_star_20` is the
+risk-neutral probability of a 20% drop, `p_log_20` the log investor's
+(Martin 2017), and `p_power_20` the power-utility investor's with gamma = 2
+(Martin and Shi 2025); `days_used` is the horizon of the expiration used.
+Rows are only appended, never rewritten. On the live monitor, the deploy
+workflow keeps this file on the `monitor-history` branch between runs. It
+holds no settlement prices, only quantities computed from them."""
 
 
 [charts]
